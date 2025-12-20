@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 public class KullaniciController {
 
     @Autowired
-    private KullaniciRepository kullaniciRepo;
+    private KullaniciRepository kullaniciRepository;
 
     // 1. GİRİŞ YAP (LOGIN)
     @PostMapping("/giris")
     public Kullanici girisYap(@RequestBody Kullanici istek) {
         // Bu email ile kayıtlı biri var mı?
-        Kullanici bulunan = kullaniciRepo.findByEmail(istek.getEmail());
+        Kullanici bulunan = kullaniciRepository.findByEmail(istek.getEmail());
 
         // Kullanıcı varsa VE şifresi doğruysa?
         if (bulunan != null && bulunan.getSifre().equals(istek.getSifre())) {
@@ -31,6 +31,6 @@ public class KullaniciController {
     @PostMapping("/kayit")
     public Kullanici kayitOl(@RequestBody Kullanici yeniKullanici) {
         // Basitçe kaydet (Normalde şifre kontrolü vs. yapılır)
-        return kullaniciRepo.save(yeniKullanici);
+        return kullaniciRepository.save(yeniKullanici);
     }
 }

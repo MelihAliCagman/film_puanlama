@@ -9,52 +9,61 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/filmler")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000")
 public class FilmController {
 
     @Autowired
-    private FilmRepository filmRepository; // Değişken adını standartlaştırdık
+    private FilmRepository filmRepository;
 
-    // 1. Tüm Filmleri Getir
+    // Tüm filmleri getir
     @GetMapping
     public List<Film> tumFilmleriGetir() {
         return filmRepository.findAll();
     }
 
-    // 2. Yeni Film Ekle
+    // Yeni film ekle
     @PostMapping
-    public Film filmEkle(@RequestBody Film yeniFilm) {
-        return filmRepository.save(yeniFilm);
+    public Film filmEkle(@RequestBody Film film) {
+        return filmRepository.save(film);
     }
 
-    // 3. Film Silme (ARTIK STORED PROCEDURE KULLANIYOR)
+    // Film sil
     @DeleteMapping("/{id}")
     public void filmSil(@PathVariable Long id) {
-        // Eski yöntem (Standart JPA):
-        // filmRepository.deleteById(id);
-
-        // YENİ YÖNTEM (Stored Procedure):
-        // Veritabanındaki 'film_sil' prosedürünü tetikler.
-        // Bu prosedür önce yorumları, sonra izleme listesini, en son filmi siler.
-        filmRepository.filmiProsedurleSil(id);
+        filmRepository.deleteById(id);
     }
 
-    // 4. Film Güncelleme (Admin Paneli İçin)
+    // --- YENİ: FİLM GÜNCELLEME ÖZELLİĞİ ---
     @PutMapping("/{id}")
     public Film filmGuncelle(@PathVariable Long id, @RequestBody Film guncelFilm) {
-        Film mevcut = filmRepository.findById(id).orElseThrow();
+        Film mevcut = filmRepository.findById(id).orElse(null);
+        if (mevcut != null) {
+            mevcut.setAd(guncelFilm.getAd());
+            mevcut.setYonetmen(guncelFilm.getYonetmen());
+            mevcut.setOyuncular(guncelFilm.getOyuncular());
+            mevcut.setKonu(guncelFilm.getKonu());
+            mevcut.setYapimYili(guncelFilm.getYapimYili());
+            mevcut.setTur(guncelFilm.getTur());
+            mevcut.setPosterUrl(guncelFilm.getPosterUrl());
+            return filmRepository.save(mevcut);
+        }
+        return null;
+    }
 
-        // Alanları güncelle
-        mevcut.setAd(guncelFilm.getAd());
-        mevcut.setYonetmen(guncelFilm.getYonetmen());
-        mevcut.setKonu(guncelFilm.getKonu());
-        mevcut.setPosterUrl(guncelFilm.getPosterUrl());
-        mevcut.setTur(guncelFilm.getTur());
+    // --- KEŞFET EKRANI İÇİN ÖZEL SORGU Endpoint'leri ---
 
-        // HATA ÇIKARAN KISIM DÜZELTİLDİ:
-        // Artık 'yayinTarihi' değil 'yapimYili' kullanıyoruz
-        mevcut.setYapimYili(guncelFilm.getYapimYili());
+    @GetMapping("/populer")
+    public List<Film> getPopulerFilmler() {
+        return filmRepository.enCokIzlenenler(10);
+    }
 
-        return filmRepository.save(mevcut);
+    @GetMapping("/trendler")
+    public List<Film> getHaftaninTrendleri() {
+        return filmRepository.haftaninTrendleri(10);
+    }
+
+    @GetMapping("/arkadas-onerileri/{kullaniciId}")
+    public List<Film> getArkadasOnerileri(@PathVariable Long kullaniciId) {
+        return filmRepository.arkadaslarinOnerileri(kullaniciId, 10);
     }
 }

@@ -1,7 +1,7 @@
 package com.example.filmpuanlama.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "izleme_listesi")
@@ -11,10 +11,6 @@ public class IzlemeListesi {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate eklenmeTarihi = LocalDate.now();
-
-    // --- İLİŞKİLER ---
-
     @ManyToOne
     @JoinColumn(name = "kullanici_id")
     private Kullanici kullanici;
@@ -23,13 +19,19 @@ public class IzlemeListesi {
     @JoinColumn(name = "film_id")
     private Film film;
 
-    // --- Getter ve Setter ---
+    @Column(name = "eklenme_tarihi")
+    private LocalDateTime eklenmeTarihi = LocalDateTime.now();
+
+    // GETTER VE SETTER'LAR
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public LocalDate getEklenmeTarihi() { return eklenmeTarihi; }
-    public void setEklenmeTarihi(LocalDate eklenmeTarihi) { this.eklenmeTarihi = eklenmeTarihi; }
+
     public Kullanici getKullanici() { return kullanici; }
     public void setKullanici(Kullanici kullanici) { this.kullanici = kullanici; }
+
     public Film getFilm() { return film; }
     public void setFilm(Film film) { this.film = film; }
+
+    public LocalDateTime getEklenmeTarihi() { return eklenmeTarihi; }
+    public void setEklenmeTarihi(LocalDateTime eklenmeTarihi) { this.eklenmeTarihi = eklenmeTarihi; }
 }
