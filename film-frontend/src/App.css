@@ -1,0 +1,341 @@
+/* =========================================
+   1. GENEL AYARLAR
+   ========================================= */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #141414; /* Netflix Siyahı */
+  color: white;
+  -webkit-font-smoothing: antialiased;
+}
+
+.App {
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+button:active { transform: scale(0.98); }
+
+input, textarea {
+  background-color: #333;
+  border: 1px solid #444;
+  color: white;
+  padding: 12px;
+  border-radius: 4px;
+  outline: none;
+  font-size: 1rem;
+}
+
+input:focus, textarea:focus {
+  border-color: #e50914;
+  background-color: #444;
+}
+
+/* =========================================
+   2. HEADER (ÜST MENÜ)
+   ========================================= */
+.app-header {
+  background-color: #000;
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #e50914;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+
+.search-input {
+  width: 300px;
+  padding: 10px 15px;
+  background-color: #222;
+  border: 1px solid #444;
+  border-radius: 4px;
+}
+
+.user-info { display: flex; gap: 10px; }
+.admin-btn { background-color: #444; color: white; padding: 8px 15px; }
+.list-btn { background-color: white; color: black; padding: 8px 15px; }
+.logout-btn { background-color: #e50914; color: white; padding: 8px 15px; }
+
+.admin-btn:hover, .list-btn:hover { opacity: 0.8; }
+.logout-btn:hover { background-color: #b20710; }
+
+/* =========================================
+   3. GİRİŞ / KAYIT EKRANI
+   ========================================= */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  /* Sinema Salonu Görseli (Hatasız) */
+  background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1517604931442-71053e3e2c6c?q=80&w=2070&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+}
+
+.auth-box {
+  background-color: rgba(0, 0, 0, 0.85);
+  padding: 60px;
+  border-radius: 8px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,0,0,0.8);
+}
+
+.auth-box h1 { color: #e50914; margin-bottom: 30px; font-size: 2.5rem; }
+.auth-box h2 { margin-bottom: 20px; color: #fff; }
+
+.auth-box input { width: 100%; margin-bottom: 20px; box-sizing: border-box; }
+
+.auth-box button {
+  width: 100%;
+  padding: 15px;
+  background-color: #e50914;
+  color: white;
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+.link { color: #737373; margin-top: 20px; cursor: pointer; font-size: 0.9rem; }
+.link:hover { color: white; text-decoration: underline; }
+
+/* Hata Kutusu */
+.error-box { background-color: #e87c03; color: white; padding: 15px; border-radius: 4px; margin-bottom: 20px; text-align: left; }
+.error-box.locked { background-color: #b20710; }
+
+/* =========================================
+   4. ANA İÇERİK & FİLM KARTLARI
+   ========================================= */
+.main-content { padding: 30px; flex: 1; }
+
+.film-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 25px;
+  padding: 20px 0;
+}
+
+.film-card {
+  background-color: #2f2f2f;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: transform 0.3s;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.film-card:hover { transform: scale(1.05); z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+
+.film-card img { width: 100%; height: 300px; object-fit: cover; }
+
+.film-card h3, .film-card h4 {
+  font-size: 1rem; margin: 10px; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.rating-badge {
+  position: absolute; top: 10px; right: 10px;
+  background-color: rgba(0,0,0,0.8);
+  padding: 4px 8px; border-radius: 2px;
+  border: 1px solid #fff; font-size: 0.8rem;
+}
+.delete-badge {
+  position: absolute; top: 10px; left: 10px;
+  background-color: #e50914; padding: 5px; font-size: 0.8rem; color: white;
+}
+
+/* =========================================
+   5. ADMIN PANELİ (ESKİ HALİ - KUTULU)
+   ========================================= */
+.admin-container {
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+.admin-panel {
+  background-color: #1f1f1f; /* Koyu Gri Kart Rengi */
+  padding: 40px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 700px;
+  text-align: left;
+  border: 1px solid #333; /* İnce çerçeve */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Derinlik */
+}
+
+.admin-header {
+  border-bottom: 1px solid #444;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+}
+.admin-header h2 { color: #fff; margin: 0; display: flex; align-items: center; gap: 10px; }
+.admin-header p { color: #aaa; margin: 5px 0 0 0; }
+
+.film-form .form-group { margin-bottom: 20px; }
+.film-form label { display: block; margin-bottom: 8px; color: #ccc; font-weight: 500; }
+.film-form input, .film-form textarea { width: 100%; box-sizing: border-box; }
+.film-form .form-row { display: flex; gap: 20px; }
+.film-form .form-row .form-group { flex: 1; }
+
+.save-btn {
+  width: 100%;
+  padding: 15px;
+  background-color: #e50914;
+  color: white;
+  font-size: 1.1rem;
+  margin-top: 10px;
+  border-radius: 4px;
+}
+.save-btn:hover { background-color: #f40612; }
+
+/* =========================================
+   6. PROFİL SAYFASI (DÜZENLENDİ)
+   ========================================= */
+.profile-header {
+  background-color: #1f1f1f;
+  padding: 30px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  border: 1px solid #333;
+}
+
+.profile-header h1 { margin: 0; font-size: 2rem; }
+.profile-stats { color: #888; margin-top: 10px; font-size: 1rem; }
+.add-list-btn { background-color: #fff; color: black; padding: 10px 20px; }
+
+.tabs {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 10px;
+}
+.tabs button {
+  background: none;
+  color: #888;
+  font-size: 1.1rem;
+  padding: 10px 5px;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+}
+.tabs button.active-tab {
+  color: white;
+  border-bottom-color: #e50914;
+}
+
+.user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+.user-card {
+  background-color: #222;
+  padding: 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border: 1px solid #333;
+}
+.user-card:hover { background-color: #333; border-color: #555; }
+
+/* =========================================
+   7. KEŞFET (YATAY KAYDIRMA)
+   ========================================= */
+.kesfet-container { text-align: left; padding: 0 20px; }
+.kesfet-container h2 {
+  color: #e50914;
+  margin-top: 40px; margin-bottom: 15px;
+  font-size: 1.5rem; border-left: 4px solid #fff; padding-left: 15px;
+}
+
+.scroll-grid {
+  display: flex;
+  overflow-x: auto;
+  gap: 15px;
+  padding-bottom: 20px;
+  scrollbar-width: thin; scrollbar-color: #555 #222;
+}
+.scroll-grid::-webkit-scrollbar { height: 8px; }
+.scroll-grid::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+.scroll-grid .film-card { min-width: 180px; max-width: 180px; flex-shrink: 0; }
+
+/* =========================================
+   8. DETAY SAYFASI
+   ========================================= */
+.film-detail-container { position: relative; min-height: 85vh; text-align: left; }
+.detail-backdrop {
+  position: absolute; top: 0; left: 0; width: 100%; height: 60vh;
+  background-size: cover; background-position: center; opacity: 0.3; z-index: 0;
+  mask-image: linear-gradient(180deg, black, transparent);
+  -webkit-mask-image: linear-gradient(180deg, black, transparent);
+}
+.detail-content { position: relative; z-index: 2; max-width: 1000px; margin: 0 auto; padding-top: 30px; }
+.back-btn { background: none; color: #ccc; font-size: 1.2rem; margin-bottom: 20px; }
+.detail-flex { display: flex; gap: 40px; }
+.main-poster { width: 300px; border-radius: 8px; box-shadow: 0 0 30px rgba(0,0,0,0.8); }
+.info-wrapper { flex: 1; padding-top: 10px; }
+.movie-title { font-size: 3rem; margin: 0; line-height: 1.1; }
+.movie-year { font-weight: 300; opacity: 0.7; font-size: 2rem; }
+.meta-tags { display: flex; gap: 10px; margin: 20px 0; }
+.meta-tag { padding: 5px 10px; border: 1px solid #777; font-size: 0.9rem; }
+.meta-tag.puan { border-color: #2ecc71; color: #2ecc71; font-weight: bold; }
+.hero-btn { background-color: white; color: black; padding: 12px 30px; font-size: 1.1rem; margin-top: 20px; }
+.comments-section { background-color: #1f1f1f; padding: 30px; margin-top: 50px; border-radius: 8px; }
+.comment-input-area { display: flex; gap: 10px; margin-bottom: 20px; }
+.score-input { width: 80px; } .text-input { flex: 1; }
+.review-bubble { background-color: #2a2a2a; padding: 20px; margin-bottom: 15px; border-radius: 4px; position: relative; }
+.review-top { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #444; padding-bottom: 5px; }
+.author { color: #fff; font-weight: bold; } .score { color: #f5c518; }
+.trash-btn { background: none; color: #666; font-size: 1.2rem; position: absolute; bottom: 15px; right: 15px; }
+
+/* Detay Sayfasındaki Yönetmen/Oyuncu Tasarımı */
+.crew-info {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 30px;
+  border-top: 1px solid #333;
+  padding-top: 20px;
+}
+
+.crew-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.crew-item .label {
+  font-size: 0.85rem;
+  color: #e50914;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.crew-item .value {
+  font-size: 1.1rem;
+  color: white;
+  font-weight: 500;
+}
