@@ -7,4 +7,6 @@ import java.util.List;
 public interface DegerlendirmeRepository extends JpaRepository<Degerlendirme, Long> {
     // Bir filme ait yorumları bulmak için özel metot
     List<Degerlendirme> findByFilmId(Long filmId);
+
+    void deleteByFilmId(Long filmId);
 }

@@ -1,7 +1,7 @@
 package com.example.filmpuanlama.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.Data; // Eğer lombok çalışıyorsa (yoksa getter/setter elle yaz)
 
 @Entity
 @Table(name = "kullanicilar")
@@ -16,11 +16,12 @@ public class Kullanici {
     @Column(unique = true) // Aynı mail ile iki kişi kayıt olamaz
     private String email;
 
-    private String sifre; // Normalde şifreli tutulur ama şimdilik düz yazalım
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // API cevaplarında asla dönmez
+    private String sifre; // BCrypt hash'i olarak saklanır
 
     private String rol; // "ADMIN" veya "USER"
 
-    // --- Getter ve Setter'lar (Lombok yoksa) ---
+    // --- Getter ve Setter'lar ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getAdSoyad() { return adSoyad; }

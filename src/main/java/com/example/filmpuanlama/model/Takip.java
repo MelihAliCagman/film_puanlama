@@ -1,10 +1,10 @@
 package com.example.filmpuanlama.model;
 
 import jakarta.persistence.*;
-import lombok.Data; // Lombok yoksa getter/setter elle ekle
 
 @Entity
-@Table(name = "takipler")
+@Table(name = "takipler",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"takip_eden_id", "takip_edilen_id"}))
 public class Takip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -12,6 +12,9 @@ public interface IzlemeListesiRepository extends JpaRepository<IzlemeListesi, Lo
     // 2. Bir kullanıcı bu filmi zaten eklemiş mi? (Çift kaydı önlemek için)
     boolean existsByKullaniciIdAndFilmId(Long kullaniciId, Long filmId);
 
+    // 4. Film silinirken ilgili kayıtları temizle
+    void deleteByFilmId(Long filmId);
+
     // 3. Listeden çıkarmak için kaydı bul
     IzlemeListesi findByKullaniciIdAndFilmId(Long kullaniciId, Long filmId);
 }

@@ -1,5 +1,6 @@
 package com.example.filmpuanlama.controller;
 
+import com.example.filmpuanlama.config.Oturum;
 import com.example.filmpuanlama.model.Degerlendirme;
 import com.example.filmpuanlama.model.Film;
 import com.example.filmpuanlama.model.Kullanici;
@@ -7,13 +8,15 @@ import com.example.filmpuanlama.repository.DegerlendirmeRepository;
 import com.example.filmpuanlama.repository.FilmRepository;
 import com.example.filmpuanlama.repository.KullaniciRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/degerlendirmeler")
-@CrossOrigin
 public class DegerlendirmeController {
 
     @Autowired
@@ -35,8 +38,13 @@ public class DegerlendirmeController {
     @PostMapping
     public Degerlendirme yorumEkle(@RequestBody YorumIstegi istek) {
         // Film ve Kullanıcıyı bul
-        Film film = filmRepo.findById(istek.filmId).orElseThrow();
-        Kullanici kullanici = kullaniciRepo.findById(istek.kullaniciId).orElseThrow();
+        if (istek.puan < 1 || istek.puan > 10) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Puan 1 ile 10 arasında olmalıdır");
+        }
+        Film film = filmRepo.findById(istek.filmId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Film bulunamadı"));
+        Kullanici kullanici = kullaniciRepo.findById(Oturum.kullaniciId()) // kimlik istekten degil token'dan alinir
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Kullanıcı bulunamadı"));
 
         // Yeni yorumu oluştur
         Degerlendirme yeniYorum = new Degerlendirme();
@@ -49,17 +57,21 @@ public class DegerlendirmeController {
         return degerlendirmeRepo.save(yeniYorum);
     }
 
-    // 3. Yorum Silme (SENİN EKLEDİĞİN KISIM - ARTIK DOĞRU YERDE)
+    // 3. Yorum Silme
     @DeleteMapping("/{id}")
     public void yorumSil(@PathVariable Long id) {
+        Degerlendirme d = degerlendirmeRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Yorum bulunamadı"));
+        if (!Oturum.adminMi() && !d.getKullanici().getId().equals(Oturum.kullaniciId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bu yorumu silme yetkin yok");
+        }
         degerlendirmeRepo.deleteById(id);
         // Not: Trigger sayesinde ortalama puan otomatik güncellenecek!
     }
 
-} // <--- Controller sınıfı burada bitiyor
+}
 
-// --- Yardımcı Sınıf ---
-// (Bu sınıfı en alta, ana sınıfın dışına koyuyoruz)
+// İstek gövdesi
 class YorumIstegi {
     public Long filmId;
     public Long kullaniciId;

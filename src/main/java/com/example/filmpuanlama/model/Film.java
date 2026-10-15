@@ -31,7 +31,6 @@ public class Film {
     private String posterUrl;
 
     // --- Getter ve Setter Metotları ---
-    // (Lombok yerine bunları elle yazdık, artık hata vermeyecek)
 
     public Long getId() {
         return id;
@@ -97,7 +96,6 @@ public class Film {
         this.posterUrl = posterUrl;
     }
 
-    // ... Getter ve Setter metotlarını ekle (veya Lombok varsa kendi halleder) ...
     public String getOyuncular() {
         return oyuncular;
     }
